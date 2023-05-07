@@ -1,35 +1,34 @@
 import java.util.*;
 
 
-class MyMap {
-    /*
-     * generic type arguments
-     */
-    static class HashMap<K, V> {
-        private class NodeHash {
+class MyHashMap {
+
+    static class HashMapiing<K, V> { // generics
+        private class Node {
             K key;
             V value;
 
-            public NodeHash(K key, V value) {
+            public Node(K key, V value) {
                 this.key = key;
                 this.value = value;
             }
         }
+
         /*
-         * Declaring variable for node
+        Decalring variable for node
          */
         private int p;
         /*
-         * Declaring variables for buckets
+        Declaring variable for bucket
          */
         private int Q;
-        /*
-         * variable for calculating length of bucket
-         */
-        private LinkedList<NodeHash> buckets[];
 
-        @SuppressWarnings("unchecked")
-        public HashMap() {
+        /*
+        Calculating length of bucket
+         */
+        private LinkedList<Node> buckets[];
+
+        public HashMapiing() {
             this.Q = 4;
             this.buckets = new LinkedList[4];
             for (int i = 0; i < 4; i++) {
@@ -43,28 +42,28 @@ class MyMap {
         }
 
         private int searchInLL(K key, int bi) {
-            LinkedList<NodeHash> ll = buckets[bi];
+            LinkedList<Node> ll = buckets[bi];
 
             for (int i = 0; i < ll.size(); i++) {
                 if (ll.get(i).key == key) {
-                    return i; // di
+                    return i;
                 }
             }
 
             return -1;
         }
 
-        @SuppressWarnings("unchecked")
+
         private void rehash() {
-            LinkedList<NodeHash> oldBucket[] = buckets;
+            LinkedList<Node> oldBucket[] = buckets;
             buckets = new LinkedList[Q * 2];
             for (int i = 0; i < Q * 2; i++) {
                 buckets[i] = new LinkedList<>();
             }
             for (int i = 0; i < oldBucket.length; i++) {
-                LinkedList<NodeHash> ll = oldBucket[i];
+                LinkedList<Node> ll = oldBucket[i];
                 for (int j = 0; j < ll.size(); j++) {
-                    NodeHash node = ll.get(j);
+                    Node node = ll.get(j);
                     put(node.key, node.value);
                 }
             }
@@ -72,25 +71,25 @@ class MyMap {
 
         public void put(K key, V value) {
             int bi = hashFunction(key);
-            int di = searchInLL(key, bi); // di = -1
-            if (di == -1) { // key doesn't exist
-                buckets[bi].add(new NodeHash(key, value));
+            int di = searchInLL(key, bi); //
+            if (di == -1) {
+                buckets[bi].add(new Node(key, value));
                 p++;
             } else { // key exists
-                NodeHash node = buckets[bi].get(di);
+                Node node = buckets[bi].get(di);
                 node.value = value;
             }
-            double lambda = (double) p / Q;
+            double check = (double) p / Q;
 
-            if (lambda > 2.0) {
+            if (check > 2.0) {
                 rehash();
             }
         }
 
         public boolean containsKey(K key) {
             int bi = hashFunction(key);
-            int di = searchInLL(key, bi); // di = -1
-            if (di == -1) { // key doesn't exist
+            int di = searchInLL(key, bi);
+            if (di == -1) {
                 return false;
             } else { // key exists
                 return true;
@@ -99,11 +98,11 @@ class MyMap {
 
         public V remove(K key) {
             int bi = hashFunction(key);
-            int di = searchInLL(key, bi); // di = -1
-            if (di == -1) { // key doesn't exist
+            int di = searchInLL(key, bi);
+            if (di == -1) {
                 return null;
-            } else { // key exists
-                NodeHash node = buckets[bi].remove(di);
+            } else {
+                Node node = buckets[bi].remove(di);
                 p--;
                 return node.value;
             }
@@ -111,21 +110,21 @@ class MyMap {
 
         public V get(K key) {
             int bi = hashFunction(key);
-            int di = searchInLL(key, bi); // di = -1
-            if (di == -1) { // key doesn't exist
+            int di = searchInLL(key, bi);
+            if (di == -1) {
                 return null;
             } else { // key exists
-                NodeHash node = buckets[bi].get(di);
+                Node node = buckets[bi].get(di);
                 return node.value;
             }
         }
 
         public ArrayList<K> keySet() {
             ArrayList<K> keys = new ArrayList<>();
-            for (int i = 0; i < buckets.length; i++) { // bi
-                LinkedList<NodeHash> ll = buckets[i];
-                for (int j = 0; j < ll.size(); j++) { // di
-                    NodeHash node = ll.get(j);
+            for (int i = 0; i < buckets.length; i++) {
+                LinkedList<Node> ll = buckets[i];
+                for (int j = 0; j < ll.size(); j++) {
+                    Node node = ll.get(j);
                     keys.add(node.key);
                 }
             }
@@ -137,6 +136,9 @@ class MyMap {
         }
     }
 }
+
+
+
 /*
  * This is our main class
  */
@@ -150,15 +152,16 @@ public class Hashing {
 
         HashMap<String, Integer> map = new HashMap<>();
 
-        String sentence = "to be or not to be";
+        String s = "Paranoids are not paranoid because they are paranoid but because they keep putting themselves deliberately into paranoid avoidable situations";
 
-        String[] str = sentence.split(" ");
+        String[] str = s.split(" ");
 
         for (int i = 0; i < str.length; i++) {
             map.put(str[i], map.getOrDefault(str[i], 0) + 1);
         }
-
+        map.remove("avoidable");
         System.out.println(map);
+
 
     }
 
